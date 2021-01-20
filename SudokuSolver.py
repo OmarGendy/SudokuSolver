@@ -1,11 +1,11 @@
-import os
+# import os
 
 
-def check_row(x, grid):
+def solve_coord(x, y, grid):
     """
-    Checks the row of a selected coordinate to see if the coordinate can be solved
-    :param grid: The sudoku 2D array
-    :param x: Row that needs to be checked in the grid
+    Checks the row, column, and box of a selected coordinate to see if it can be solved
+    :param x & y: Coordinate that needs to be solved in the grid
+    :param grid: Reference to the sudoku 2D array
     :return: Number the box can be filled in as, or 0 if it cannot be solved
     """
 
@@ -16,57 +16,27 @@ def check_row(x, grid):
     for i in range(0, 9):
         num_checker[grid[x][i]] = True
 
-    # If the row is solvable, num_checker will be a list of 9 Trues (includes 0) and 1 False who's index will be the solution.
+    # num_checker will populate with True for numbers (the indexes 1-9) that exist in the row
     if num_checker.count(False) == 1:
         for i in range(1, 10):
             if not num_checker[i]:
                 solution = i
                 break
-
-    # Will return 0 if not solvable, thereby not altering the value in the grid
-    return solution
-
-
-def check_column(y, grid):
-    """
-    Checks the row of a selected coordinate to see if the coordinate can be solved
-    :param grid: The sudoku 2D array
-    :param y: Column that needs to be checked in the grid
-    :return: Number the box can be filled in as, or 0 if it cannot be solved
-    """
-
-    num_checker = [0, False, False, False, False, False, False, False, False, False]
-    solution = 0
 
     # Check what numbers exist in the column
     for i in range(0, 9):
         num_checker[grid[i][y]] = True
 
-    # If the column is solvable, num_checker will be a list of 9 Trues (includes 0) and 1 False who's index will be the solution.
+    # num_checker will populate with True for numbers (the indexes 1-9) that exist in the column
     if num_checker.count(False) == 1:
         for i in range(1, 10):
             if not num_checker[i]:
                 solution = i
                 break
 
-    # Will return 0 if not solvable, thereby not altering the value in the grid
-    return solution
-
-
-def check_box(x, y, grid):
-    """
-    Checks the sub-square of a selected coordinate to see if the coordinate can be solved
-    :param x & y: Coordinates on the grid
-    :param grid: The sudoku 2D array
-    :return: Number the box can be filled in as, or 0 if it cannot be solved
-    """
-
-    num_checker = [0, False, False, False, False, False, False, False, False, False]
-    solution = 0
-
-    # Determines which box we're dealing with (1-9).
+    # Determines which box we're dealing with (1-9), then populates num_checker based on values.
     if x <= 2 and y <= 2:  # Box 1
-        for i in range(0,3):
+        for i in range(0, 3):
             for j in range(0, 3):
                 num_checker[grid[i][j]] = True
 
@@ -103,7 +73,7 @@ def check_box(x, y, grid):
             for j in range(6, 9):
                 num_checker[grid[i][j]] = True
 
-    # If the column is solvable, num_checker will be a list of 9 Trues (includes 0) and 1 False who's index will be the solution.
+    # If the box is solvable, num_checker will be a list of 9 Trues (includes 0) and 1 False who's index will be the solution.
     if num_checker.count(False) == 1:
         for i in range(1, 10):
             if not num_checker[i]:
@@ -112,6 +82,7 @@ def check_box(x, y, grid):
 
     # Will return 0 if not solvable, thereby not altering the value in the grid
     return solution
+
 
 def main():
     # os.chdir(os.path.expanduser('~'))
@@ -146,8 +117,14 @@ def main():
         for y in range(0, 9):
             grid[x][y] = int(curr_line[y])
 
-    grid[1][7] = check_box(1, 7, grid)
-    print(grid[1][7])
+    # Begin solving
+    while 0 in grid[0] or 0 in grid[1] or 0 in grid[2] or 0 in grid[3] or 0 in grid[4] or 0 in grid[5] or 0 in grid[6] or 0 in grid[7] or 0 in grid[8]:
+        for x in range(0, 9):
+            for y in range(0, 9):
+                if grid[x][y] == 0:
+                    grid[x][y] = solve_coord(x, y, grid)
+
+    print(str(grid[0]) + "\n" + str(grid[1]) + "\n" + str(grid[2]) + "\n" + str(grid[3]) + "\n" + str(grid[4]) + "\n" + str(grid[5]) + "\n" + str(grid[6]) + "\n"+ str(grid[7]) + "\n"+ str(grid[8]) + "\n")
 
 
 if __name__ == "__main__":
