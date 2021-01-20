@@ -53,6 +53,66 @@ def check_column(y, grid):
     return solution
 
 
+def check_box(x, y, grid):
+    """
+    Checks the sub-square of a selected coordinate to see if the coordinate can be solved
+    :param x & y: Coordinates on the grid
+    :param grid: The sudoku 2D array
+    :return: Number the box can be filled in as, or 0 if it cannot be solved
+    """
+
+    num_checker = [0, False, False, False, False, False, False, False, False, False]
+    solution = 0
+
+    # Determines which box we're dealing with (1-9).
+    if x <= 2 and y <= 2:  # Box 1
+        for i in range(0,3):
+            for j in range(0, 3):
+                num_checker[grid[i][j]] = True
+
+    elif x <= 2 and 3 <= y <= 5:  # Box 2
+        for i in range(0, 3):
+            for j in range(3, 6):
+                num_checker[grid[i][j]] = True
+    elif x <= 2 and y >= 6:  # Box 3
+        for i in range(0, 3):
+            for j in range(6, 9):
+                num_checker[grid[i][j]] = True
+    elif 3 <= x <= 5 and y <= 2:  # Box 4
+        for i in range(3, 6):
+            for j in range(0, 3):
+                num_checker[grid[i][j]] = True
+    elif 3 <= x <= 5 and 3 <= y <= 5:  # Box 5
+        for i in range(3, 6):
+            for j in range(3, 6):
+                num_checker[grid[i][j]] = True
+    elif 3 <= x <= 5 and y >= 6:  # Box 6
+        for i in range(3, 6):
+            for j in range(6, 9):
+                num_checker[grid[i][j]] = True
+    elif x >= 6 and y <= 2:  # Box 7
+        for i in range(6, 9):
+            for j in range(0, 3):
+                num_checker[grid[i][j]] = True
+    elif x >= 6 and 3 <= y <= 5:  # Box 8
+        for i in range(6, 9):
+            for j in range(3, 6):
+                num_checker[grid[i][j]] = True
+    elif x >= 6 and y >= 6:  # Box 9
+        for i in range(6, 9):
+            for j in range(6, 9):
+                num_checker[grid[i][j]] = True
+
+    # If the column is solvable, num_checker will be a list of 9 Trues (includes 0) and 1 False who's index will be the solution.
+    if num_checker.count(False) == 1:
+        for i in range(1, 10):
+            if not num_checker[i]:
+                solution = i
+                break
+
+    # Will return 0 if not solvable, thereby not altering the value in the grid
+    return solution
+
 def main():
     # os.chdir(os.path.expanduser('~'))
     # filepath = input("Please provide the full path to your sudoku board .txt file\n\
@@ -85,6 +145,9 @@ def main():
         curr_line = curr_line.replace(" ", "")
         for y in range(0, 9):
             grid[x][y] = int(curr_line[y])
+
+    grid[1][7] = check_box(1, 7, grid)
+    print(grid[1][7])
 
 
 if __name__ == "__main__":
