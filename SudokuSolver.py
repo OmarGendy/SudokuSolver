@@ -1,4 +1,4 @@
-# import os
+import os
 
 
 def solve_coord(x, y, grid):
@@ -93,29 +93,29 @@ def main():
     #     filepath = input("I did not find your file there. Please retry entering a path: ")
 
     filepath = "C:\\Users\\akama\\Documents\\sudokuboard.txt"
-    board_file = open(filepath, "r")
-    grid = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]
+    with open(filepath, "r") as board_file:
+        grid = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ]
 
-    # Populate the grid with values from the .txt file (11 lines). Removes spaces and | to condense line to just values
-    for x in range(0, 9):
-        curr_line = board_file.readline()
-        if curr_line[0] == '-':
-            # Skip over the lines with dashes
+        # Populate the grid with values from the .txt file (11 lines). Removes spaces and | to condense line to just values
+        for x in range(0, 9):
             curr_line = board_file.readline()
-        curr_line = curr_line.replace("|", "")
-        curr_line = curr_line.replace(" ", "")
-        for y in range(0, 9):
-            grid[x][y] = int(curr_line[y])
+            if curr_line[0] == '-':
+                # Skip over the lines with dashes
+                curr_line = board_file.readline()
+            curr_line = curr_line.replace("|", "")
+            curr_line = curr_line.replace(" ", "")
+            for y in range(0, 9):
+                grid[x][y] = int(curr_line[y])
 
     # Begin solving
     while 0 in grid[0] or 0 in grid[1] or 0 in grid[2] or 0 in grid[3] or 0 in grid[4] or 0 in grid[5] or 0 in grid[6] or 0 in grid[7] or 0 in grid[8]:
@@ -124,7 +124,40 @@ def main():
                 if grid[x][y] == 0:
                     grid[x][y] = solve_coord(x, y, grid)
 
-    print(str(grid[0]) + "\n" + str(grid[1]) + "\n" + str(grid[2]) + "\n" + str(grid[3]) + "\n" + str(grid[4]) + "\n" + str(grid[5]) + "\n" + str(grid[6]) + "\n"+ str(grid[7]) + "\n"+ str(grid[8]) + "\n")
+    # Outputting solution to new file in same directory as original file
+    os.chdir(os.path.split(filepath)[0])
+    with open("sudoku_solved.txt", "w") as new_file:
+        for i in range(0, 9):
+
+            # Create a temp variable with string values instead of ints
+            curr_list = grid[i]
+            for j in range(0, 9):
+                curr_list[j] = str(curr_list[j])
+
+            # Format the string to look like the original .txt
+            j = 1
+            while j < 16:
+                curr_list.insert(j, " ")
+                j += 2
+            curr_list.insert(6, "| ")
+            curr_list.insert(13, "| ")
+            line = "".join(curr_list)
+
+            # Writing to file. No new line at last line and requires format rows.
+            if i == 8:
+                new_file.write(line)
+            elif i == 2 or i == 5:
+                new_file.write(line)
+                new_file.write("\n")
+                new_file.write("------+-------+------")
+                new_file.write("\n")
+            else:
+                new_file.write(line)
+                new_file.write("\n")
+
+    # Printing result
+    with open("sudoku_solved.txt", "r") as new_file:
+        print(new_file.read())
 
 
 if __name__ == "__main__":
